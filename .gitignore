@@ -24,3 +24,6 @@ __pycache__/
 .watermark.json
 *.pem
 app-secret.json
+
+# terraform test harness lockfile (regenerated on init)
+tests/harness/.terraform.lock.hcl
