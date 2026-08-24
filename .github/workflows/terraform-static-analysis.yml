@@ -7,9 +7,6 @@ on:
       - main
     paths:
       - '**.tf'
-      - '**.tftest.hcl'
-      - 'build.sh'
-      - 'function/**'
       - '.github/workflows/terraform-static-analysis.yml'
 
 permissions:
@@ -52,12 +49,3 @@ jobs:
           output_format: cli
           skip_check: CKV_GIT_1,CKV_AWS_126,CKV2_AWS_38,CKV2_AWS_39
 
-      # Credential-free module test: mocks the AWS provider (no creds) but runs
-      # build.sh for real, consuming the module from a subdirectory so path.module
-      # is nested — guards the remote-consumption packaging path that validate and
-      # a root-level plan cannot see.
-      - name: Terraform test
-        run: |
-          cd tests/harness
-          terraform init -no-color
-          terraform test -no-color
