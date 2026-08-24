@@ -31,6 +31,13 @@ jobs:
           terraform_version: 1.14.7
           terraform_wrapper: false
 
+      # build.sh runs under this interpreter; 3.13 matches the Lambda runtime and
+      # ships a modern pip that honours --require-hashes with cross-platform wheels.
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.13"
+
       # Credential-free: mock_provider fakes AWS, but build.sh runs for real with
       # the module consumed from a subdirectory (nested path.module), exercising
       # the packaging path that static analysis and a root-level plan cannot see.
