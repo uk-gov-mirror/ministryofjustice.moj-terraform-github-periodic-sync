@@ -136,7 +136,9 @@ resource "aws_lambda_permission" "default" {
 # Build + package the Lambda (self-building, like v1's npm/zip flow).
 # ---------------------------------------------------------------------------
 data "external" "build" {
-  program     = ["bash", "${path.module}/build.sh"]
+  # Path is relative to working_dir; prefixing path.module would double it when
+  # the module is consumed remotely (.terraform/modules/<name>).
+  program     = ["bash", "build.sh"]
   working_dir = path.module
 }
 

@@ -1,0 +1,44 @@
+name: Python Static Analysis
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'function/**'
+      - '.github/workflows/python-static-analysis.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  ruff:
+    name: Ruff
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
+        with:
+          version: "0.11.8"
+      - run: |
+          cd function
+          uv run --locked --python 3.13 --extra dev ruff check scim_sync tests
+
+  semgrep:
+    name: Semgrep
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.13"
+      # The retired semgrep-action is replaced by a plain run block. Scoped to
+      # high-signal rulesets (not --config auto) to keep noise down.
+      - run: |
+          pip install semgrep==1.174.0
+          semgrep scan --config p/python --config p/secrets --error --quiet function
